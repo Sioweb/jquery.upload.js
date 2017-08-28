@@ -1,0 +1,42 @@
+{
+  "name": "sioweb-upload",
+  "version": "1.0.0",
+  "main": "dist/jquery.upload.min.js",
+  "homepage": "https://github.com/Sioweb/jquery.upload.js#readme",
+  "author": "Sascha Weidner <support@sioweb.de>",
+  "description": "A simple jquery based ajax upload",
+  "keywords": [
+    "upload",
+    "jquery",
+    "drag & drop",
+    "javascript"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "package.json"
+  ],
+  "dependencies": {
+    "jquery": "*",
+    "sioweb-confirm": "*"
+  },
+  "devDependencies": {
+    "grunt": "^1.0.1",
+    "grunt-cli": "1.2.0",
+    "grunt-contrib-uglify": "1.0.1"
+  },
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "build": "npm install && grunt",
+    "start": "grunt watch",
+    "test": "grunt && grunt test:slow"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sioweb/jquery.upload.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Sioweb/jquery.upload.js/issues"
+  }
+}

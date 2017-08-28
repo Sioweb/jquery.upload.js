@@ -1,0 +1,13 @@
+/vendor/
+/node_modules
+/*.html
+
+*~
+*.diff
+*.patch
+
+.bower.json
+.DS_Store
+
+npm-debug.log*
+package-lock.json
