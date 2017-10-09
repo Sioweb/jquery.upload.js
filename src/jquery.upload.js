@@ -31,6 +31,8 @@
 		error: function() {},
 
 		defaultDrop: null,
+
+		preventSubmitOnChange: false,
 	};
 	
 
@@ -72,8 +74,10 @@
 		this.loaded = function() {
 			selfObj.uploadElement = selfObj.item.find('input[type="file"]');
 			selfObj.uploadElement.change(selfObj.internOnChange);
-
-			selfObj.uploadArea = $('<div class="upload_element">Keine Datei ausgewählt</div>').insertBefore(selfObj.uploadElement);
+			
+			if(!selfObj.item.find('.upload_element').length) {
+				selfObj.uploadArea = $('<div class="upload_element">Keine Datei ausgewählt</div>').insertBefore(selfObj.uploadElement);
+			}
 
 			selfObj.item.on('drop',function(e){
 				if(selfObj.preventDropDefault) {
@@ -108,7 +112,7 @@
 						content: 'Soll die ausgewählte Datei nun hochgeladen werden?',
 						accept: function(confirmObj) {
 							selfObj.send(form_data);
-							selfObj.change(selfObj,e);
+							selfObj.change(form_data,files,selfObj,e);
 							el.value = '';
 						},
 						abort: function() {
@@ -116,8 +120,10 @@
 						}
 					});
 				} else {
-					selfObj.send(form_data);
-					selfObj.change(selfObj,e);
+					if(!selfObj.preventSubmitOnChange) {
+						selfObj.send(form_data);
+					}
+					selfObj.change(form_data,files,selfObj,e);
 					el.value = '';
 				}
 			}
