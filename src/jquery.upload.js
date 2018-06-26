@@ -13,7 +13,7 @@
 		confirm: null,
 		dragOverTimeout: false,
 
-		filename: 'pdf[file]',
+		filename: 'file',
 
 		preventDropDefault: true,
 		preventDragoverDefault: true,
