@@ -1,0 +1,32 @@
+{
+  "name": "sioweb-upload",
+  "version": "3.0.0",
+  "description": "jQuery drag&drop ajax file upload",
+  "main": "./src/upload.js",
+  "style": [
+    "./src/upload.css"
+  ],
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sioweb/jquery.upload.js.git"
+  },
+  "keywords": [
+    "jquery",
+    "upload",
+    "ajax"
+  ],
+  "dependencies": {
+    "jquery": "*",
+    "sioweb-confirm": "*",
+    "blueimp-load-image": "*"
+  },
+  "author": "Sascha Weidner",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Sioweb/jquery.upload.js/issues"
+  },
+  "homepage": "https://github.com/Sioweb/jquery.upload.js#readme"
+}
