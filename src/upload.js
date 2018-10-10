@@ -1,12 +1,13 @@
-import Confirm from "sioweb-confirm";
-import "blueimp-load-image";
+import $ from "jquery";
+import "sioweb-confirm";
+import loadImage from "blueimp-load-image";
 
 (function (factory) {
 	
 	if(typeof module === "object" && typeof module.exports === "object") {
-		module.exports = factory(require("jquery"), window, document);
+		module.exports = factory($, window, document);
 	} else {
-	  factory(jQuery, window, document);
+	  factory($, window, document);
 	}
   }(function($, window, document, undefined) {
 
