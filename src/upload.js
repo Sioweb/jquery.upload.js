@@ -141,6 +141,7 @@ import loadImage from "blueimp-load-image";
 						el.setAttribute('data-value', files.name);
 						selfObj.loadImageDone(el, imgCanvas, selfObj);
 						files = selfObj.dataURLToBlob(imgCanvas.toDataURL('image/jpeg'));
+						files.name = el.getAttribute('data-value');
 						selfObj.uploadedFiles[el.name] = files;
 						selfObj.handleFile.bind(el)(e, files);
 					},
