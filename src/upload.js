@@ -20,6 +20,7 @@ import loadImage from "blueimp-load-image";
 		isHtml: false,
 		ajax: null,
 		confirm: null,
+		max_upload_files: 5,
         dragOverTimeout: false,
         
         height: null,
@@ -257,38 +258,59 @@ import loadImage from "blueimp-load-image";
 			}, 400);
 			selfObj.over(e);
 		};
+		
+		this.clone = function(src) {
+			return Object.assign({}, src);
+		}
 
-		this.send = function() {
+		this.send = function() {			
 			var data = arguments[0]||selfObj.form_data,
-				f_data = selfObj.data(selfObj);
-			
+				f_data = selfObj.data(selfObj),
+				chunkIndex = 0,
+				chunkedFileArray = [];
+
 			for(var fileName in selfObj.uploadedFiles) {
-				data.append(fileName, selfObj.uploadedFiles[fileName]);
-			}
-	
-			if(f_data && typeof f_data === 'object') {
-				for(var d in f_data) {
-					data.append(d,f_data[d]);
+				if(chunkedFileArray[chunkIndex] === undefined) {
+					chunkedFileArray[chunkIndex] = {};
+				}
+
+				chunkedFileArray[chunkIndex][fileName] = selfObj.uploadedFiles[fileName];
+
+				if(Object.keys(chunkedFileArray[chunkIndex]).length === selfObj.max_upload_files) {
+					chunkIndex++;
 				}
 			}
 
-			$.ajax($.extend(true,{
-				url: '/',
-				method: 'POST',
-				data: data,
-				asych: false,
-				cache: false,
-				contentType: false,
-				processData: false,
-				success: function(data) {
-					selfObj.success(selfObj,data);
-					selfObj.form_data = new FormData();
-					selfObj.uploadedFiles = {};
-				},
-				ajaxSend: function(data) {
-					selfObj.ajaxSend(selfObj,data);
+			for(var chunk in chunkedFileArray) {
+				data = new FormData();
+				if(f_data && typeof f_data === 'object') {
+					for(var d in f_data) {
+						data.append(d,f_data[d]);
+					}
 				}
-			},selfObj.ajax));
+
+				for(var fileName in chunkedFileArray[chunk]) {
+					data.append(fileName, chunkedFileArray[chunk][fileName]);
+				}
+
+				$.ajax($.extend(true,{
+					url: '/',
+					method: 'POST',
+					data: data,
+					asych: false,
+					cache: false,
+					contentType: false,
+					processData: false,
+					success: function(data) {
+						selfObj.success(selfObj,data);
+						selfObj.form_data = new FormData();
+						selfObj.uploadedFiles = {};
+					},
+					ajaxSend: function(data) {
+						selfObj.ajaxSend(selfObj,data);
+					}
+				},selfObj.ajax));
+			}
 		};
 
         this.dataURLToBlob = function(dataURL) {
