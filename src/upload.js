@@ -161,7 +161,7 @@ import loadImage from "blueimp-load-image";
 			var el = this,
 				originFile = el.files[0];
 
-			// $('.upload-size').html('Es werden '+(originFile.size/1048576).toFixed(2)+') MiB von Ihrem Datenvolumen verbraucht!');
+			$('.upload-size').html('Es werden bis zu '+(originFile.size/1048576).toFixed(2)+') MiB von Ihrem Datenvolumen verbraucht!');
 
 			if(selfObj.ajax !== null) {
 				if(selfObj.confirm !== null) {
