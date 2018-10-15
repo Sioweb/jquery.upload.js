@@ -21,7 +21,8 @@
   "dependencies": {
     "jquery": "*",
     "sioweb-confirm": "*",
-    "blueimp-load-image": "*"
+    "blueimp-load-image": "*",
+    "blueimp-canvas-to-blob": "^3.14.0"
   },
   "author": "Sascha Weidner",
   "license": "ISC",
