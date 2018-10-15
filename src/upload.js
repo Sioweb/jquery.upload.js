@@ -29,7 +29,7 @@ import { callbackify } from "util";
 
 		imageLoad: {
 			width: null,
-			fileType: 'image/jpeg',
+			fileType: 'image/png',
 			useBlob: true
 		},
 
@@ -161,7 +161,7 @@ import { callbackify } from "util";
 								selfObj.uploadedFiles[el.name] = blob;
 								selfObj.handleFile.bind(el)(e, blob);
 							} else {
-								files = imgCanvas.toDataURL('image/jpeg');
+								files = imgCanvas.toDataURL(selfObj.imageLoad.fileType);
 								selfObj.loadImageDone(el, imgCanvas, files, selfObj);
 								selfObj.uploadedFiles[el.name] = files;
 								selfObj.handleFile.bind(el)(e, files);
@@ -231,7 +231,7 @@ import { callbackify } from "util";
 			} else {
 				selfObj.change(selfObj.form_data, originFile, selfObj, e);
 			}
-		}
+		};
 
 		this.addFile = function (e) {
 			selfObj.internDrop(e);
@@ -291,20 +291,20 @@ import { callbackify } from "util";
 				selfObj.item.removeClass('sw-drag-over');
 				selfObj.drop(e, selfObj, selfObj.form_data);
 			}
-		},
+		};
 
-			this.internDragover = function (e) {
-				clearTimeout(selfObj.dragOverTimeout);
-				selfObj.item.addClass('sw-drag-over');
-				selfObj.dragOverTimeout = setTimeout(function () {
-					selfObj.item.removeClass('sw-drag-over');
-				}, 400);
-				selfObj.over(e);
-			};
+		this.internDragover = function (e) {
+			clearTimeout(selfObj.dragOverTimeout);
+			selfObj.item.addClass('sw-drag-over');
+			selfObj.dragOverTimeout = setTimeout(function () {
+				selfObj.item.removeClass('sw-drag-over');
+			}, 400);
+			selfObj.over(e);
+		};
 
 		this.clone = function (src) {
 			return Object.assign({}, src);
-		}
+		};
 
 		this.send = function () {
 			var data = arguments[0] || selfObj.form_data,
