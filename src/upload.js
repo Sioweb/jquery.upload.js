@@ -29,7 +29,7 @@ import { callbackify } from "util";
 
 		imageLoad: {
 			width: null,
-			fileType: 'image/png',
+			fileType: 'image/jpeg',
 			useBlob: true
 		},
 
@@ -146,9 +146,17 @@ import { callbackify } from "util";
 
 		this.internOnChange = function (e) {
 			var el = this,
-				files = el.files[0];
+				files = el.files[0],
+				maxWidth = 0;
 
-			if (selfObj.imageLoad && selfObj.imageLoad.width) {
+			if(selfObj.imageLoad.width !== undefined) {
+				maxWidth = selfObj.imageLoad.width;
+				if(typeof maxWidth === 'function') {
+					maxWidth = maxWidth(selfObj);
+				}
+			}
+
+			if (selfObj.imageLoad && maxWidth) {
 				loadImage(
 					files,
 					function (imgCanvas) {
@@ -156,20 +164,22 @@ import { callbackify } from "util";
 
 						imgCanvas.toBlob(function (blob) {
 							el.setAttribute('data-size', blob.size);
+							selfObj.uploadedFiles[el.name] = blob;
+
 							if (selfObj.imageLoad.useBlob) {
 								selfObj.loadImageDone(el, imgCanvas, blob, selfObj);
-								selfObj.uploadedFiles[el.name] = blob;
 								selfObj.handleFile.bind(el)(e, blob);
-							} else {
-								files = imgCanvas.toDataURL(selfObj.imageLoad.fileType);
-								selfObj.loadImageDone(el, imgCanvas, files, selfObj);
-								selfObj.uploadedFiles[el.name] = files;
-								selfObj.handleFile.bind(el)(e, files);
 							}
-						});
+						}, selfObj.imageLoad.fileType);
+
+						if (!selfObj.imageLoad.useBlob) {
+							files = imgCanvas.toDataURL(selfObj.imageLoad.fileType);
+							selfObj.loadImageDone(el, imgCanvas, files, selfObj);
+							selfObj.handleFile.bind(el)(e, files);
+						}
 					},
 					{
-						maxWidth: selfObj.imageLoad.width,
+						maxWidth: maxWidth,
 						orientation: true,
 						canvas: true
 					}
