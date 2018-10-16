@@ -156,7 +156,18 @@ import { callbackify } from "util";
 				}
 			}
 
-			if (selfObj.imageLoad && maxWidth) {
+			if (selfObj.imageLoad && maxWidth !== 0) {
+				var loadImageSettings =  {
+					maxWidth: maxWidth,
+					orientation: true,
+					canvas: true
+				};
+
+				if(maxWidth === false) {
+					loadImageSettings.maxWidth = null;
+					delete loadImageSettings.maxWidth;
+				}
+
 				loadImage(
 					files,
 					function (imgCanvas) {
@@ -169,36 +180,20 @@ import { callbackify } from "util";
 							if (selfObj.imageLoad.useBlob) {
 								selfObj.loadImageDone(el, imgCanvas, blob, selfObj);
 								selfObj.handleFile.bind(el)(e, blob);
-							} else {
-								files = imgCanvas.toDataURL(selfObj.imageLoad.fileType);
-								selfObj.loadImageDone(el, imgCanvas, files, selfObj);
-								selfObj.handleFile.bind(el)(e, files);
 							}
 						}, selfObj.imageLoad.fileType);
 
-					},
-					{
-						maxWidth: maxWidth,
-						orientation: true,
-						canvas: true
-					}
+						if (!selfObj.imageLoad.useBlob) {
+							files = imgCanvas.toDataURL(selfObj.imageLoad.fileType);
+							selfObj.loadImageDone(el, imgCanvas, files, selfObj);
+							selfObj.handleFile.bind(el)(e, files);
+						}
+					}, loadImageSettings
 				);
 			} else if (files !== null) {
 				selfObj.form_data.append(el.name, files);
 				selfObj.handleFile.bind(el)(e, files);
 			}
-		};
-
-		this.ceil = function(wert) {
-			var dez = arguments[1]||1;
-			wert = parseFloat(wert);
-			if (!wert) return 0;
-			dez = parseInt(dez);
-			if (!dez) dez=0;
-	
-			var umrechnungsfaktor = Math.pow(10,dez);
-	
-			return Math.ceil(wert * umrechnungsfaktor) / umrechnungsfaktor;
 		};
 
 		this.getFileSize = function () {
@@ -207,9 +202,15 @@ import { callbackify } from "util";
 			selfObj.uploadSize.html('');
 			if (Object.keys(selfObj.uploadedFiles).length) {
 				for (var fileName in selfObj.uploadedFiles) {
-					summedSize += selfObj.uploadedFiles[fileName].size;
+					if (selfObj.imageLoad.useBlob) {
+						summedSize += selfObj.uploadedFiles[fileName].size;
+					} else {
+						summedSize += selfObj.uploadedFiles[fileName].length;
+					}
 				}
-				summedSize = selfObj.ceil(summedSize / 1048576).toFixed(1).replace('.', ',');
+
+				summedSize = (summedSize / 1048576).toFixed(1).replace('.', ',');
+
 				selfObj.uploadSize.html(selfObj.uploadSizeText.replace('%s', summedSize));
 			}
 
@@ -373,7 +374,6 @@ import { callbackify } from "util";
 		};
 
 		this.fileSize = function (canvas, callback) {
-			console.log()
 		};
 
 		this.dataURLToBlob = function (dataURL) {
