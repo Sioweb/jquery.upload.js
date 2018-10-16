@@ -149,21 +149,21 @@ import { callbackify } from "util";
 				files = el.files[0],
 				maxWidth = 0;
 
-			if(selfObj.imageLoad.width !== undefined) {
+			if (selfObj.imageLoad.width !== undefined) {
 				maxWidth = selfObj.imageLoad.width;
-				if(typeof maxWidth === 'function') {
+				if (typeof maxWidth === 'function') {
 					maxWidth = maxWidth(selfObj);
 				}
 			}
 
 			if (selfObj.imageLoad && maxWidth !== 0) {
-				var loadImageSettings =  {
+				var loadImageSettings = {
 					maxWidth: maxWidth,
 					orientation: true,
 					canvas: true
 				};
 
-				if(maxWidth === false) {
+				if (maxWidth === false) {
 					loadImageSettings.maxWidth = null;
 					delete loadImageSettings.maxWidth;
 				}
@@ -180,7 +180,7 @@ import { callbackify } from "util";
 							if (selfObj.imageLoad.useBlob) {
 								selfObj.loadImageDone(el, imgCanvas, blob, selfObj);
 								selfObj.handleFile.bind(el)(e, blob);
-							} else {	
+							} else {
 								files = imgCanvas.toDataURL(selfObj.imageLoad.fileType);
 								selfObj.loadImageDone(el, imgCanvas, files, selfObj);
 								selfObj.handleFile.bind(el)(e, files);
@@ -195,15 +195,15 @@ import { callbackify } from "util";
 			}
 		};
 
-		this.round = function(wert) {
-			var dez = arguments[1]||1;
+		this.round = function (wert) {
+			var dez = arguments[1] || 1;
 			wert = parseFloat(wert);
 			if (!wert) return 0;
 			dez = parseInt(dez);
-			if (!dez) dez=0;
-	
-			var umrechnungsfaktor = Math.pow(10,dez);
-	
+			if (!dez) dez = 0;
+
+			var umrechnungsfaktor = Math.pow(10, dez);
+
 			return Math.ceil(wert * umrechnungsfaktor) / umrechnungsfaktor;
 		};
 
@@ -220,7 +220,6 @@ import { callbackify } from "util";
 					}
 				}
 
-				console.log(summedSize);
 				summedSize = selfObj.round(summedSize / 1048576).toFixed(1).replace('.', ',');
 				selfObj.uploadSize.html(selfObj.uploadSizeText.replace('%s', summedSize));
 			}
@@ -333,6 +332,22 @@ import { callbackify } from "util";
 			return Object.assign({}, src);
 		};
 
+		this.toBlob = function(dataURI) {
+            var byteString;
+            if (dataURI.split(',')[0].indexOf('base64') >= 0) {
+                byteString = atob(dataURI.split(',')[1]);
+			} else {
+				byteString = unescape(dataURI.split(',')[1]);
+			}
+			
+            var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
+            var ia = new Uint8Array(byteString.length);
+            for (var i = 0; i < byteString.length; i++) {
+                ia[i] = byteString.charCodeAt(i);
+            }
+            return new Blob([ia], {type:mimeString});
+		};
+
 		this.send = function () {
 			var data = arguments[0] || selfObj.form_data,
 				f_data = selfObj.data(selfObj),
@@ -344,6 +359,9 @@ import { callbackify } from "util";
 					chunkedFileArray[chunkIndex] = {};
 				}
 
+				if(!(selfObj.uploadedFiles[fileName] instanceof Blob)) {
+					selfObj.uploadedFiles[fileName] = selfObj.toBlob(selfObj.uploadedFiles[fileName]);
+				}
 				chunkedFileArray[chunkIndex][fileName] = selfObj.uploadedFiles[fileName];
 
 				if (Object.keys(chunkedFileArray[chunkIndex]).length === selfObj.max_upload_files) {
