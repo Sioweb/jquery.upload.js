@@ -221,7 +221,7 @@ import { callbackify } from "util";
 					}
 				}
 
-				summedSize = this.round(summedSize / 1048576).toFixed(1).replace('.', ',');
+				summedSize = selfObj.round(summedSize / 1048576).toFixed(1).replace('.', ',');
 
 				selfObj.uploadSize.html(selfObj.uploadSizeText.replace('%s', summedSize));
 			}
