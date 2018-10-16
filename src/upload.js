@@ -169,14 +169,13 @@ import { callbackify } from "util";
 							if (selfObj.imageLoad.useBlob) {
 								selfObj.loadImageDone(el, imgCanvas, blob, selfObj);
 								selfObj.handleFile.bind(el)(e, blob);
+							} else {
+								files = imgCanvas.toDataURL(selfObj.imageLoad.fileType);
+								selfObj.loadImageDone(el, imgCanvas, files, selfObj);
+								selfObj.handleFile.bind(el)(e, files);
 							}
 						}, selfObj.imageLoad.fileType);
 
-						if (!selfObj.imageLoad.useBlob) {
-							files = imgCanvas.toDataURL(selfObj.imageLoad.fileType);
-							selfObj.loadImageDone(el, imgCanvas, files, selfObj);
-							selfObj.handleFile.bind(el)(e, files);
-						}
 					},
 					{
 						maxWidth: maxWidth,
@@ -190,21 +189,27 @@ import { callbackify } from "util";
 			}
 		};
 
+		this.ceil = function(wert) {
+			var dez = arguments[1]||1;
+			wert = parseFloat(wert);
+			if (!wert) return 0;
+			dez = parseInt(dez);
+			if (!dez) dez=0;
+	
+			var umrechnungsfaktor = Math.pow(10,dez);
+	
+			return Math.ceil(wert * umrechnungsfaktor) / umrechnungsfaktor;
+		};
+
 		this.getFileSize = function () {
 			var summedSize = 0;
 
 			selfObj.uploadSize.html('');
 			if (Object.keys(selfObj.uploadedFiles).length) {
 				for (var fileName in selfObj.uploadedFiles) {
-					if (selfObj.imageLoad.useBlob) {
-						summedSize += selfObj.uploadedFiles[fileName].size;
-					} else {
-						summedSize += selfObj.uploadedFiles[fileName].length;
-					}
+					summedSize += selfObj.uploadedFiles[fileName].size;
 				}
-
-				summedSize = (summedSize / 1048576).toFixed(1).replace('.', ',');
-
+				summedSize = selfObj.ceil(summedSize / 1048576).toFixed(1).replace('.', ',');
 				selfObj.uploadSize.html(selfObj.uploadSizeText.replace('%s', summedSize));
 			}
 
