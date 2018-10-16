@@ -180,14 +180,13 @@ import { callbackify } from "util";
 							if (selfObj.imageLoad.useBlob) {
 								selfObj.loadImageDone(el, imgCanvas, blob, selfObj);
 								selfObj.handleFile.bind(el)(e, blob);
+							} else {	
+								files = imgCanvas.toDataURL(selfObj.imageLoad.fileType);
+								selfObj.loadImageDone(el, imgCanvas, files, selfObj);
+								selfObj.handleFile.bind(el)(e, files);
 							}
 						}, selfObj.imageLoad.fileType);
 
-						if (!selfObj.imageLoad.useBlob) {
-							files = imgCanvas.toDataURL(selfObj.imageLoad.fileType);
-							selfObj.loadImageDone(el, imgCanvas, files, selfObj);
-							selfObj.handleFile.bind(el)(e, files);
-						}
 					}, loadImageSettings
 				);
 			} else if (files !== null) {
@@ -214,15 +213,15 @@ import { callbackify } from "util";
 			selfObj.uploadSize.html('');
 			if (Object.keys(selfObj.uploadedFiles).length) {
 				for (var fileName in selfObj.uploadedFiles) {
-					if (selfObj.imageLoad.useBlob) {
+					if (selfObj.uploadedFiles[fileName] instanceof Blob) {
 						summedSize += selfObj.uploadedFiles[fileName].size;
 					} else {
 						summedSize += selfObj.uploadedFiles[fileName].length;
 					}
 				}
 
+				console.log(summedSize);
 				summedSize = selfObj.round(summedSize / 1048576).toFixed(1).replace('.', ',');
-
 				selfObj.uploadSize.html(selfObj.uploadSizeText.replace('%s', summedSize));
 			}
 
