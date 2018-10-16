@@ -180,20 +180,32 @@ import { callbackify } from "util";
 							if (selfObj.imageLoad.useBlob) {
 								selfObj.loadImageDone(el, imgCanvas, blob, selfObj);
 								selfObj.handleFile.bind(el)(e, blob);
-							} else {
-								files = imgCanvas.toDataURL(selfObj.imageLoad.fileType);
-								selfObj.loadImageDone(el, imgCanvas, files, selfObj);
-								selfObj.handleFile.bind(el)(e, files);
 							}
 						}, selfObj.imageLoad.fileType);
 
-						
+						if (!selfObj.imageLoad.useBlob) {
+							files = imgCanvas.toDataURL(selfObj.imageLoad.fileType);
+							selfObj.loadImageDone(el, imgCanvas, files, selfObj);
+							selfObj.handleFile.bind(el)(e, files);
+						}
 					}, loadImageSettings
 				);
 			} else if (files !== null) {
 				selfObj.form_data.append(el.name, files);
 				selfObj.handleFile.bind(el)(e, files);
 			}
+		};
+
+		this.round = function(wert) {
+			var dez = arguments[1]||1;
+			wert = parseFloat(wert);
+			if (!wert) return 0;
+			dez = parseInt(dez);
+			if (!dez) dez=0;
+	
+			var umrechnungsfaktor = Math.pow(10,dez);
+	
+			return Math.ceil(wert * umrechnungsfaktor) / umrechnungsfaktor;
 		};
 
 		this.getFileSize = function () {
@@ -209,7 +221,7 @@ import { callbackify } from "util";
 					}
 				}
 
-				summedSize = (summedSize / 1048576).toFixed(1).replace('.', ',');
+				summedSize = this.round(summedSize / 1048576).toFixed(1).replace('.', ',');
 
 				selfObj.uploadSize.html(selfObj.uploadSizeText.replace('%s', summedSize));
 			}
@@ -371,38 +383,6 @@ import { callbackify } from "util";
 					}
 				}, selfObj.ajax));
 			}
-		};
-
-		this.fileSize = function (canvas, callback) {
-		};
-
-		this.dataURLToBlob = function (dataURL) {
-			var BASE64_MARKER = ';base64,',
-				done = arguments[1] || function () { },
-				_blob = null;
-
-			if (dataURL.indexOf(BASE64_MARKER) == -1) {
-				var parts = dataURL.split(',');
-				var contentType = parts[0].split(':')[1];
-				var raw = parts[1];
-
-				return new Blob([raw], { type: contentType });
-			}
-
-			var parts = dataURL.split(BASE64_MARKER);
-			var contentType = parts[0].split(':')[1];
-			var raw = window.atob(parts[1]);
-			var rawLength = raw.length;
-
-			var uInt8Array = new Uint8Array(rawLength);
-
-			for (var i = 0; i < rawLength; ++i) {
-				uInt8Array[i] = raw.charCodeAt(i);
-			}
-
-			_blob = new Blob([uInt8Array], { type: contentType });
-			done(_blob, selfObj);
-			return _blob;
 		};
 	};
 
