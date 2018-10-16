@@ -180,14 +180,14 @@ import { callbackify } from "util";
 							if (selfObj.imageLoad.useBlob) {
 								selfObj.loadImageDone(el, imgCanvas, blob, selfObj);
 								selfObj.handleFile.bind(el)(e, blob);
+							} else {
+								files = imgCanvas.toDataURL(selfObj.imageLoad.fileType);
+								selfObj.loadImageDone(el, imgCanvas, files, selfObj);
+								selfObj.handleFile.bind(el)(e, files);
 							}
 						}, selfObj.imageLoad.fileType);
 
-						if (!selfObj.imageLoad.useBlob) {
-							files = imgCanvas.toDataURL(selfObj.imageLoad.fileType);
-							selfObj.loadImageDone(el, imgCanvas, files, selfObj);
-							selfObj.handleFile.bind(el)(e, files);
-						}
+						
 					}, loadImageSettings
 				);
 			} else if (files !== null) {
