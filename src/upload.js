@@ -155,7 +155,6 @@ import { callbackify } from "util";
 					maxWidth = maxWidth(selfObj);
 				}
 			}
-
 			if (selfObj.imageLoad && maxWidth !== 0) {
 				var loadImageSettings = {
 					maxWidth: maxWidth,
@@ -237,6 +236,8 @@ import { callbackify } from "util";
 				if (selfObj.confirm !== null) {
 					$.confirm({
 						title: 'Datei hochladen',
+						removeOnClose: true,
+						lazyLoad: true,
 						content: 'Soll die ausgewählte Datei nun hochgeladen werden?',
 						accept: function (confirmObj) {
 							selfObj.send(selfObj.form_data);
@@ -299,6 +300,8 @@ import { callbackify } from "util";
 						$.confirm({
 							title: 'Datei hochladen',
 							content: 'Soll die ausgewählte Datei nun hochgeladen werden?',
+							removeOnClose: true,
+							lazyLoad: true,
 							accept: function (confirmObj) {
 								selfObj.send(selfObj.form_data);
 							},
@@ -394,6 +397,7 @@ import { callbackify } from "util";
 						selfObj.form_data = new FormData();
 						selfObj.uploadedFiles = {};
 						selfObj.getFileSize();
+						selfObj.update();
 					},
 					ajaxSend: function (data) {
 						selfObj.ajaxSend(selfObj, data);
