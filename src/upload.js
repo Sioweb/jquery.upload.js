@@ -50,6 +50,7 @@ import { callbackify } from "util";
 		success: function () { },
 		ajaxSend: function () { },
 		loadImageDone: function (el, canvas, file, uploadObj) { },
+		loadOriginImageDone: function (el, canvas, file, uploadObj) { },
 
 		error: function () { },
 
@@ -167,31 +168,47 @@ import { callbackify } from "util";
 					delete loadImageSettings.maxWidth;
 				}
 
-				loadImage(
-					files,
-					function (imgCanvas) {
-						el.setAttribute('data-value', files.name);
-
-						imgCanvas.toBlob(function (blob) {
-							el.setAttribute('data-size', blob.size);
-							selfObj.uploadedFiles[el.name] = blob;
-
-							if (selfObj.imageLoad.useBlob) {
-								selfObj.loadImageDone(el, imgCanvas, blob, selfObj);
-								selfObj.handleFile.bind(el)(e, blob);
-							} else {
-								files = imgCanvas.toDataURL(selfObj.imageLoad.fileType);
-								selfObj.loadImageDone(el, imgCanvas, files, selfObj);
-								selfObj.handleFile.bind(el)(e, files);
-							}
-						}, selfObj.imageLoad.fileType);
-
-					}, loadImageSettings
-				);
+				selfObj.loadImage(loadImageSettings, event, el, files);
+				if(loadImageSettings.maxWidth !== undefined && loadImageSettings.maxWidth) {
+					selfObj.loadImage(loadImageSettings, event, el, files, true);
+				}
 			} else if (files !== null) {
 				selfObj.form_data.append(el.name, files);
 				selfObj.handleFile.bind(el)(e, files);
 			}
+		};
+
+		this.loadImage = function(loadImageSettings, e, el, files) {
+			var origin = arguments[4] || false,
+				callback = 'loadImageDone';
+
+			if(origin) {
+				loadImageSettings.maxWidth = null;
+				delete loadImageSettings.maxWidth;
+				callback = 'loadOriginImageDone';
+			}
+
+			loadImage(
+				files,
+				function (imgCanvas) {
+					el.setAttribute('data-value', files.name);
+
+					imgCanvas.toBlob(function (blob) {
+						el.setAttribute('data-size', blob.size);
+						selfObj.uploadedFiles[el.name] = blob;
+
+						if (selfObj.imageLoad.useBlob) {
+							selfObj[callback](el, imgCanvas, blob, selfObj);
+							selfObj.handleFile.bind(el)(e, blob);
+						} else {
+							files = imgCanvas.toDataURL(selfObj.imageLoad.fileType);
+							selfObj[callback](el, imgCanvas, files, selfObj);
+							selfObj.handleFile.bind(el)(e, files);
+						}
+					}, selfObj.imageLoad.fileType);
+
+				}, loadImageSettings
+			);
 		};
 
 		this.round = function (wert) {
