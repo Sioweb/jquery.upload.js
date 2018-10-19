@@ -19,6 +19,7 @@ import { callbackify } from "util";
 	$[pluginName + 'Default'] = {
 		container: window,
 		isHtml: false,
+		loadingIcon: null,
 		ajax: null,
 		confirm: null,
 		max_upload_files: 5,
@@ -84,9 +85,13 @@ import { callbackify } from "util";
 			this.item = $(this.elem);
 			this.container = $(this.container);
 			this.isHTML = selfObj.elem.tagName.toLowerCase() === 'html';
+			
 
 			if (this.uploadSize) {
 				this.uploadSize = $(this.uploadSize);
+			}
+			if (this.loadingIcon) {
+				this.loadingIcon = $(this.loadingIcon);
 			}
 
 			$(document).on('dragover', function () {
@@ -150,6 +155,9 @@ import { callbackify } from "util";
 				files = el.files[0],
 				maxWidth = 0;
 
+			if(selfObj.loadingIcon) {
+				selfObj.loadingIcon.show();
+			}
 			if (selfObj.imageLoad.width !== undefined) {
 				maxWidth = selfObj.imageLoad.width;
 				if (typeof maxWidth === 'function') {
